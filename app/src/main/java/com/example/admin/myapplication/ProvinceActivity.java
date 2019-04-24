@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,7 +23,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class Main2Activity extends AppCompatActivity {
+public class ProvinceActivity extends AppCompatActivity {
 
     private List<String> data2 = new ArrayList();
     private int[] pids = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
@@ -40,22 +39,22 @@ public class Main2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         this.textView = (TextView) findViewById(R.id.text);
-        this.button = (Button) findViewById(R.id.btn);
-        this.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity( new Intent(Main2Activity.this, MainActivity.class));
-            }
-        });
+//        this.button = (Button) findViewById(R.id.btn);
+//        this.button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startActivity( new Intent(ProvinceActivity.this, CityActivity.class));
+//            }
+//        });
         this.listview = (ListView) findViewById(R.id.listview);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
         listview.setAdapter(adapter);
         this.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("点击了哪一个",""+position+":"+Main2Activity.this.pids[position]);
-                Intent intent = new Intent(Main2Activity.this,MainActivity.class);
-                intent.putExtra("pid",Main2Activity.this.pids[position]);
+                Log.v("点击了哪一个",""+position+":"+ProvinceActivity.this.pids[position]+":"+ProvinceActivity.this);
+                Intent intent = new Intent(ProvinceActivity.this,CityActivity.class);
+                intent.putExtra("pid",ProvinceActivity.this.pids[position]);
                 startActivity(intent);
             }
         });
@@ -68,7 +67,7 @@ public class Main2Activity extends AppCompatActivity {
                 final String responseText = response.body().string();
 //                textView.setText(responseText);
                 String[] result = parseJSONWithJSONObjec(responseText);
-                Main2Activity.this.data = result;
+                ProvinceActivity.this.data = result;
 
                 runOnUiThread(new Runnable() {
                     @Override
