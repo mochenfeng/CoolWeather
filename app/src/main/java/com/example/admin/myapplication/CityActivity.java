@@ -31,24 +31,18 @@ public class CityActivity extends AppCompatActivity {
     private ListView listview;
 
     private String[] data = {"","","","","","","","","","","","","","","","","","","","",};
-    private int[] cids = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,};
+    private int[] cids = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
-        int pid = intent.getIntExtra("pid",0);
+        final int pid = intent.getIntExtra("pid",0);
         Log.i("我们接收到了id",""+pid);
 
         this.textView = (TextView) findViewById(R.id.abc);
-//        this.button = (Button) findViewById(R.id.button);
-//        this.button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity( new Intent(CityActivity.this, ProvinceActivity.class));
-//            }
-//        });
+
         this.listview = (ListView) findViewById(R.id.listview);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
         listview.setAdapter(adapter);
@@ -58,6 +52,7 @@ public class CityActivity extends AppCompatActivity {
                 Log.v("点击了哪一个",""+position+":"+cids[position]+":"+data[position]);
                 Intent intent = new Intent(CityActivity.this,CountyActivity.class);
                 intent.putExtra("cid",CityActivity.this.cids[position]);
+                intent.putExtra("pid",pid);
                 startActivity(intent);
             }
         });
