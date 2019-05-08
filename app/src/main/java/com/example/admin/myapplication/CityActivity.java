@@ -21,6 +21,7 @@ import okhttp3.Response;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -30,7 +31,7 @@ public class CityActivity extends AppCompatActivity {
     private Button button;
     private ListView listview;
 
-    private String[] data = {"","","","","","","","","","","","","","","","","","","","",};
+    private List<String> data = new ArrayList<>();
     private int[] cids = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     @Override
@@ -44,12 +45,12 @@ public class CityActivity extends AppCompatActivity {
         this.textView = (TextView) findViewById(R.id.abc);
 
         this.listview = (ListView) findViewById(R.id.listview);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
         listview.setAdapter(adapter);
         this.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("点击了哪一个",""+position+":"+cids[position]+":"+data[position]);
+                Log.v("点击了哪一个",""+position+":"+cids[position]+":"+data.get(position));
                 Intent intent = new Intent(CityActivity.this,CountyActivity.class);
                 intent.putExtra("cid",CityActivity.this.cids[position]);
                 intent.putExtra("pid",pid);
@@ -66,11 +67,12 @@ public class CityActivity extends AppCompatActivity {
                 final String responseText = response.body().string();
 //                textView.setText(responseText);
                 String[] result = parseJSONJSONObjec(responseText);
-                CityActivity.this.data = result;
+//                CityActivity.this.data = result;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        textView.setText(responseText);
+//                        textView.setText(responseText);
+                        adapter.notifyDataSetChanged();
                     }
                 });
 
@@ -85,13 +87,14 @@ public class CityActivity extends AppCompatActivity {
 
     private String[] parseJSONJSONObjec(String responseText) {
         JSONArray jsonArray = null;
+        this.data.clear();
         try {
             jsonArray = new JSONArray(responseText);
             String[] result = new String[jsonArray.length()];
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = null;
                 jsonObject = jsonArray.getJSONObject(i);
-                this.data[i] = jsonObject.getString("name");
+                this.data.add(jsonObject.getString("name")) ;
                 this.cids[i] = jsonObject.getInt("id");
             }
             return result;

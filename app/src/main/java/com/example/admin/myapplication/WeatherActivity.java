@@ -18,17 +18,35 @@ import okhttp3.Response;
 public class WeatherActivity extends AppCompatActivity {
 
 
-    TextView weathertextView;
+    TextView weathertextview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
 
-        this.weathertextView = findViewById(R.id.weathertextView);
+        this.weathertextview = findViewById(R.id.weathertextview);
         String weatherId = getIntent().getStringExtra("wid");
-        String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherId ;
+        String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherId;
 
+        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback(){
+            @Override
+            public void  onResponse(Call call, Response response) throws IOException{
+                final String responseText = response.body().string();
+//                textView.setText(responseText);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        weathertextview.setText(responseText);
+                    }
+                });
+
+            }
+            @Override
+            public void onFailure(Call call, IOException e){
+
+            }
+
+        });
     }
-
 }

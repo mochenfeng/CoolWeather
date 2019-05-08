@@ -24,92 +24,97 @@ import okhttp3.Callback;
 import okhttp3.Response;
 
 public class ProvinceActivity extends AppCompatActivity {
-
-    private List<String> data2 = new ArrayList();
-    private int[] pids = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-    private String[] data = {"北京","上海","天津","重庆","香港","澳门","台湾","黑龙江","吉林","辽宁","内蒙古","河北","河南","山西","山东","江苏","浙江","福建","江西","安徽","湖北","湖南","广东","广西","海南","贵州","云南","四川","西藏","陕西","宁夏","甘肃","青海","新疆"};
     private TextView textView;
     private Button button;
     private ListView listview;
 
-//    ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,data)
+
+    private String currentlevel = "province";
+    private int pid = 0;
+
+    private List<String> data2 = new ArrayList();
+    private List<String> data = new ArrayList<>();
+    private List<Integer> pids = new ArrayList<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         this.textView = (TextView) findViewById(R.id.text);
-//        this.button = (Button) findViewById(R.id.btn);
-//        this.button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity( new Intent(ProvinceActivity.this, CityActivity.class));
-//            }
-//        });
+
         this.listview = (ListView) findViewById(R.id.listview);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, data);
         listview.setAdapter(adapter);
         this.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("点击了哪一个",""+position+":"+ProvinceActivity.this.pids[position]+":"+ProvinceActivity.this);
+                Log.v("点击了哪一个", "" + position + ":" + ProvinceActivity.this.pids.get(position) + ":" + ProvinceActivity.this.data.get(position));
+                pid = ProvinceActivity.this.pids.get(position);
+                currentlevel = "city";
+                getData(adapter);
+/*
                 Intent intent = new Intent(ProvinceActivity.this,CityActivity.class);
                 intent.putExtra("pid",ProvinceActivity.this.pids[position]);
+
+                if (currentlevel == "city"){
+                    intent.putExtra("cid", cids[position]);
+                }
+
                 startActivity(intent);
+  */
             }
         });
 
-//        String weatherId="CN101320102";
-        String weatherUrl = "http://guolin.tech/api/china";
-        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback(){
+
+        getData(adapter);
+    }
+
+    private void getData(final ArrayAdapter<String> adapter) {
+        String weatherUrl = currentlevel == "city" ? "http://guolin.tech/api/china/" + pid : "http://guolin.tech/api/china";
+        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
-            public void  onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
 //                textView.setText(responseText);
-                String[] result = parseJSONWithJSONObjec(responseText);
+                parseJSONJSONObjec(responseText);
 
-                ProvinceActivity.this.data = result;
+
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        adapter.notifyDataSetChanged();
                         textView.setText(responseText);
                     }
                 });
             }
 
 
-
             @Override
-            public void onFailure(Call call, IOException e){
+            public void onFailure(Call call, IOException e) {
 
             }
 
         });
     }
 
-    private String[] parseJSONWithJSONObjec(String responseText) {
+    private void parseJSONJSONObjec(String responseText) {
         JSONArray jsonArray = null;
+        this.data.clear();
+        this.pids.clear();
         try {
             jsonArray = new JSONArray(responseText);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = null;
+                jsonObject = jsonArray.getJSONObject(i);
+                this.data.add(jsonObject.getString("name"));
+                this.pids.add(jsonObject.getInt("id"));
+
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        String[] result = new String[jsonArray.length()];
-        for(int i = 0; i<jsonArray.length(); i++){
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = jsonArray.getJSONObject(i);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-                result[i] = jsonObject.getString("name");
-                this.pids[i] = jsonObject.getInt("id");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
     }
 }

@@ -15,6 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -22,7 +24,7 @@ import okhttp3.Response;
 
 public class CountyActivity extends AppCompatActivity {
 
-    private String[] data = {"","","","","","","","","","","","","","","","","","","","",};
+    private List<String> data = new ArrayList<>();
     private int[] cod = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     private TextView textView;
     private ListView listview;
@@ -38,12 +40,12 @@ public class CountyActivity extends AppCompatActivity {
 
         this.textView = findViewById(R.id.textview);
         this.listview = (ListView) findViewById(R.id.listview);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,data);
         listview.setAdapter(adapter);
         this.listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.v("点击了哪一个",""+position+":"+cod[position]+":"+data[position]);
+                Log.v("点击了哪一个",""+position+":"+cod[position]+":"+data.get(position));
                 Intent intent = new Intent(CountyActivity.this,CountyActivity.class);
                 intent.putExtra("cid",CountyActivity.this.cod[position]);
                 intent.putExtra("pid",cid);
@@ -62,12 +64,13 @@ public class CountyActivity extends AppCompatActivity {
                 final String responseText = response.body().string();
 //                textView.setText(responseText);
                 String[] result = parseJSONJSONObjec(responseText);
-                CountyActivity.this.data = result;
+//                CountyActivity.this.data = result;
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        textView.setText(responseText);
+//                        textView.setText(responseText);
+                        adapter.notifyDataSetChanged();
                     }
                 });
             }
@@ -84,13 +87,14 @@ public class CountyActivity extends AppCompatActivity {
     }
     private String[] parseJSONJSONObjec(String responseText) {
         JSONArray jsonArray = null;
+        this.data.clear();
         try {
             jsonArray = new JSONArray(responseText);
             String[] result = new String[jsonArray.length()];
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = null;
                 jsonObject = jsonArray.getJSONObject(i);
-                this.data[i] = jsonObject.getString("name");
+                this.data.add(jsonObject.getString("name"));
                 this.cod[i] = jsonObject.getInt("id");
             }
             return result;
