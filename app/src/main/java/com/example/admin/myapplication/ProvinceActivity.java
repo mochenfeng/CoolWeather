@@ -51,8 +51,6 @@ public class ProvinceActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.v("点击了哪一个", "" + position + ":" + ProvinceActivity.this.areaIdList.get(position) + ":" + ProvinceActivity.this.areaNameList.get(position));
-//                provinceId = ProvinceActivity.this.areaIdList.get(position);
-//                currentlevel = CITY;
                 if(currentlevel == PROVINCE) {
                     currentlevel = CITY;
                     provinceId = ProvinceActivity.this.areaIdList.get(position);
@@ -60,7 +58,6 @@ public class ProvinceActivity extends AppCompatActivity {
                     currentlevel = COUNTY;
                     cityId = ProvinceActivity.this.areaIdList.get(position);
                 } else if (currentlevel == COUNTY) {
-//                    weatherIdList = ProvinceActivity.this.areaIdList.get(position);
                     Intent intent = new Intent(ProvinceActivity.this,WeatherActivity.class);
                     intent.putExtra("weatherIdList", weatherIdList.get(position));
                     startActivity(intent);
