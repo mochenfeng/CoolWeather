@@ -26,8 +26,8 @@ public class WeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weather);
 
         this.weathertextview = findViewById(R.id.weathertextview);
-        String weatherId = getIntent().getStringExtra("wid");
-        String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherId;
+        String weatherIds = getIntent().getStringExtra("weatherIds");
+        String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherIds;
 
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback(){
             @Override
